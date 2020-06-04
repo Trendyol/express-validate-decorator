@@ -1,0 +1,104 @@
+{
+  "name": "@trendyol/express-validator",
+  "version": "0.0.1",
+  "main": "./dist/validate.js",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "test": "jest",
+    "lint": "eslint --fix 'src/**/*.ts'",
+    "build": "tsc"
+  },
+  "contributors": [
+    "erdogan.oksuz@trendyol.com"
+  ],
+  "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.6",
+    "@types/hapi__joi": "^17.1.0",
+    "@types/jest": "^25.2.3",
+    "@typescript-eslint/eslint-plugin": "^3.0.2",
+    "@typescript-eslint/parser": "^3.0.2",
+    "eslint": "^7.1.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jest": "^23.13.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "express": "^4.17.1",
+    "husky": "^4.2.5",
+    "jest": "^26.0.1",
+    "prettier": "^2.0.5",
+    "ts-jest": "^26.1.0",
+    "typescript": "^3.9.2"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es6": true,
+      "node": true
+    },
+    "extends": [
+      "plugin:prettier/recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:jest/all",
+      "standard",
+      "prettier"
+    ],
+    "globals": {
+      "Atomics": "readonly",
+      "SharedArrayBuffer": "readonly"
+    },
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaFeatures": {
+        "jsx": true
+      },
+      "ecmaVersion": 2018,
+      "sourceType": "module"
+    },
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "rules": {
+      "prettier/prettier": "error",
+      "jest/no-hooks": "off",
+      "jest/prefer-expect-assertions": "off",
+      "jest/no-standalone-expect": "off"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint",
+      "pre-push": "yarn test"
+    }
+  },
+  "jest": {
+    "testRegex": "(/test/.*|(\\.|/)(test|spec))\\.ts?$",
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!**/node_modules/**",
+      "!**/vendor/**",
+      "!**/test/**"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 90,
+        "lines": 90,
+        "statements": 90
+      }
+    }
+  }
+}
