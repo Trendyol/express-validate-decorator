@@ -1,12 +1,14 @@
 {
   "name": "@trendyol/express-validator",
   "version": "0.0.1",
-  "main": "validate.js",
+  "main": "./dist/validate.js",
+  "types": "./dist/index.d.ts",
   "license": "MIT",
   "scripts": {
     "start": "ts-node index.ts",
     "test": "jest",
-    "lint": "eslint --fix 'src/**/*.ts'"
+    "lint": "eslint --fix 'src/**/*.ts'",
+    "build": "tsc"
   },
   "contributors": [
     "erdogan.oksuz@trendyol.com"
@@ -80,11 +82,12 @@
     }
   },
   "jest": {
+    "testRegex": "(/test/.*|(\\.|/)(test|spec))\\.ts?$",
     "preset": "ts-jest",
     "testEnvironment": "node",
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "**/*.ts",
+      "src/**/*.ts",
       "!**/node_modules/**",
       "!**/vendor/**",
       "!**/test/**"

@@ -13,7 +13,7 @@ describe("validate", () => {
       this.getName = this.getName.bind(this);
     }
 
-    getName(req, res, next) {
+    getName(req: any, res: any, next: any) {
       next(this.serviceName + req.body + req.query);
       res.status(200);
       return true;
@@ -93,7 +93,7 @@ describe("validate", () => {
       const fakeServiceDescriptor = Object.getOwnPropertyDescriptor(
         fakeService,
         "getName"
-      );
+      )!;
 
       const response = {
         status: jest.fn(),
@@ -104,6 +104,7 @@ describe("validate", () => {
         body: Math.random(),
         query: Math.random(),
       };
+
       result(null, "", fakeServiceDescriptor);
 
       Object.defineProperty(fakeService, "getName", fakeServiceDescriptor);
@@ -143,7 +144,7 @@ describe("validate", () => {
       const fakeServiceDescriptor = Object.getOwnPropertyDescriptor(
         fakeService,
         "getName"
-      );
+      )!;
 
       const response = {
         status: jest.fn().mockReturnThis(),
@@ -215,7 +216,7 @@ describe("validate", () => {
       const fakeServiceDescriptor = Object.getOwnPropertyDescriptor(
         fakeService,
         "getName"
-      );
+      )!;
 
       const response = {
         status: jest.fn().mockReturnThis(),

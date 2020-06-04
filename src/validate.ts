@@ -4,8 +4,8 @@ import Joi from "@hapi/joi";
 import { NextFunction, Request, Response } from "express";
 
 export default function validate(model: ValidateModel) {
-  let querySchema: Joi.ObjectSchema<any>;
-  let bodySchema: Joi.ObjectSchema<any>;
+  let querySchema: Joi.ObjectSchema<any> | undefined;
+  let bodySchema: Joi.ObjectSchema<any> | undefined;
 
   if (model.query)
     querySchema = Joi.isSchema(model.query)
@@ -17,7 +17,8 @@ export default function validate(model: ValidateModel) {
       ? (model.body as Joi.ObjectSchema<any>)
       : Joi.object(model.body as JoiModelObject);
 
-  if (!querySchema && !bodySchema) throw Error("Query or Body schema required");
+  if (querySchema === undefined && bodySchema === undefined)
+    throw Error("Query or Body schema required");
 
   return function (
     scope: unknown,
