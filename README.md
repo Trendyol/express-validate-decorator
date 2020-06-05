@@ -1,3 +1,3 @@
-# express-validatior
+# express-validate-decorator
 
 coming soon
