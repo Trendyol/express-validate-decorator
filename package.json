@@ -1,5 +1,5 @@
 {
-  "name": "@trendyol/express-validator",
+  "name": "express-validate-decorator",
   "version": "0.0.1",
   "main": "./dist/validate.js",
   "types": "./dist/index.d.ts",
