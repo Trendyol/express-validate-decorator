@@ -36,14 +36,7 @@ jobs:
             - package.json
             - package-lock.json
             - .npmignore
-            - components
-            - enums
-            - interfaces
-            - styles
-            - types
-            - utils
-            - coverage
-            - images
+            - dist
   deploy:
     <<: *defaults
     steps:
