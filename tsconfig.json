@@ -12,5 +12,8 @@
     "strict": true,
     "experimentalDecorators": true,
     "esModuleInterop": true
-  }
+  },
+  "exclude": [
+    "./spec"
+  ],
 }
