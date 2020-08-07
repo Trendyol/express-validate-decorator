@@ -1,6 +1,6 @@
 {
   "name": "express-validate-decorator",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "./dist/validate.js",
   "types": "./dist/validate.d.ts",
   "license": "MIT",

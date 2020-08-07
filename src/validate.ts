@@ -52,7 +52,7 @@ export default function validate(model: ValidateModel) {
   };
 }
 
-const schema = Joi.object;
+const schema = Joi.object.bind(Joi);
 const {
   alternatives,
   any,

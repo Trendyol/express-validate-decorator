@@ -1,4 +1,4 @@
-import validate from "../src/validate";
+import validate, { schema, number } from "../src/validate";
 import Joi from "@hapi/joi";
 
 describe("validate", () => {
@@ -71,6 +71,10 @@ describe("validate", () => {
   });
 
   describe("should override property descriptor", () => {
+    afterEach(() => {
+      jest.resetAllMocks();
+    });
+
     it("validation success", () => {
       jest.spyOn(Joi, "isSchema").mockImplementation(() => true);
 
@@ -117,6 +121,48 @@ describe("validate", () => {
       expect(next).toHaveBeenCalledWith(
         serviceName + request.body + request.query
       );
+      expect(response.status).toHaveBeenCalledWith(200);
+
+      expect(serviceResult).toStrictEqual(true);
+    });
+
+    it("validation success with unknown params schema test", () => {
+      jest.spyOn(Joi, "isSchema").mockImplementation(() => true);
+      const next = jest.fn();
+
+      const result = validate({
+        query: schema({
+          page: number.required(),
+        }).unknown(true),
+      });
+
+      const serviceName = Math.random();
+
+      const fakeService = new FakeService(serviceName);
+
+      const fakeServiceDescriptor = Object.getOwnPropertyDescriptor(
+        fakeService,
+        "getName"
+      )!;
+
+      const response = {
+        status: jest.fn().mockReturnThis(),
+        send: jest.fn(),
+      };
+
+      const request = {
+        query: {
+          page: Math.floor(Math.random() * 10),
+          q: Math.random(),
+        },
+      };
+
+      result(null, "", fakeServiceDescriptor);
+
+      Object.defineProperty(fakeService, "getName", fakeServiceDescriptor);
+
+      const serviceResult = fakeService.getName(request, response, next);
+
       expect(response.status).toHaveBeenCalledWith(200);
 
       expect(serviceResult).toStrictEqual(true);
