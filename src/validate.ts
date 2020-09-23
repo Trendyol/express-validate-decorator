@@ -23,7 +23,11 @@ export default function validate(model: ValidateModel) {
       ? (model.params as Joi.ObjectSchema<any>)
       : Joi.object(model.params as JoiModelObject);
 
-  if (querySchema === undefined && bodySchema === undefined && paramsSchema === undefined)
+  if (
+    querySchema === undefined &&
+    bodySchema === undefined &&
+    paramsSchema === undefined
+  )
     throw Error("Query, Body or Params schema required");
 
   return function (
@@ -50,9 +54,7 @@ export default function validate(model: ValidateModel) {
       if (bodySchema) {
         const bodyResult = bodySchema.validate(req.body);
         if (bodyResult.error)
-          return res
-            .status(400)
-            .send("Body Error " + bodyResult.error.message);
+          return res.status(400).send("Body Error " + bodyResult.error.message);
       }
 
       if (paramsSchema) {
