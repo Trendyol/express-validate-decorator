@@ -4,6 +4,7 @@ import Joi from "@hapi/joi";
 describe("validate", () => {
   let query: any;
   let body: any;
+  let params: any;
 
   class FakeService {
     serviceName: number;
@@ -14,7 +15,7 @@ describe("validate", () => {
     }
 
     getName(req: any, res: any, next: any) {
-      next(this.serviceName + req.body + req.query);
+      next(this.serviceName + req.body + req.query + req.params);
       res.status(200);
       return true;
     }
@@ -28,24 +29,29 @@ describe("validate", () => {
     body = {
       name: Math.random(),
     };
+
+    params = {
+      name: Math.random()
+    }
   });
 
   afterEach(() => {
     jest.resetAllMocks();
   });
 
-  it("when given objects is Joi schema, should use both schema", () => {
+  it("when given objects is Joi schema, should use every valid schema", () => {
     jest.spyOn(Joi, "isSchema").mockImplementation(() => true);
     jest.spyOn(Joi, "object");
 
-    validate({ body, query });
+    validate({ body, query, params });
 
     expect(Joi.isSchema).toHaveBeenCalledWith(query);
     expect(Joi.isSchema).toHaveBeenCalledWith(body);
+    expect(Joi.isSchema).toHaveBeenCalledWith(params);
     expect(Joi.object).not.toHaveBeenCalled();
   });
 
-  it("when given objects is not Joi schema, should create both schema", () => {
+  it("when given objects is not Joi schema, should create every valid schema", () => {
     jest.spyOn(Joi, "isSchema").mockImplementation(() => false);
     jest.spyOn(Joi, "object").mockImplementation(() => ({} as any));
 
@@ -57,13 +63,19 @@ describe("validate", () => {
       name: Math.random(),
     };
 
-    validate({ body, query });
+    const params: any = {
+      name: Math.random(),
+    };
+
+    validate({ body, query, params });
 
     expect(Joi.isSchema).toHaveBeenCalledWith(query);
     expect(Joi.isSchema).toHaveBeenCalledWith(body);
+    expect(Joi.isSchema).toHaveBeenCalledWith(params);
 
     expect(Joi.object).toHaveBeenCalledWith(query);
     expect(Joi.object).toHaveBeenCalledWith(body);
+    expect(Joi.object).toHaveBeenCalledWith(params);
   });
 
   it("when given objects is empty, should throw error", () => {
@@ -86,9 +98,13 @@ describe("validate", () => {
         validate: jest.fn().mockImplementation(() => ({})),
       };
 
+      const paramsSchema: any = {
+        validate: jest.fn().mockImplementation(() => ({})),
+      };
+
       const next = jest.fn();
 
-      const result = validate({ body: bodySchema, query: querySchema });
+      const result = validate({ body: bodySchema, query: querySchema, params: paramsSchema });
 
       const serviceName = Math.random();
 
@@ -107,6 +123,7 @@ describe("validate", () => {
       const request = {
         body: Math.random(),
         query: Math.random(),
+        params: Math.random()
       };
 
       result(null, "", fakeServiceDescriptor);
@@ -117,9 +134,10 @@ describe("validate", () => {
 
       expect(querySchema.validate).toHaveBeenCalledWith(request.query);
       expect(bodySchema.validate).toHaveBeenCalledWith(request.body);
+      expect(paramsSchema.validate).toHaveBeenCalledWith(request.params);
 
       expect(next).toHaveBeenCalledWith(
-        serviceName + request.body + request.query
+        serviceName + request.body + request.query + request.params
       );
       expect(response.status).toHaveBeenCalledWith(200);
 
@@ -179,9 +197,13 @@ describe("validate", () => {
         validate: jest.fn(),
       };
 
+      const paramsSchema: any = {
+        validate: jest.fn(),
+      };
+
       const next = jest.fn();
 
-      const result = validate({ body: bodySchema, query: querySchema });
+      const result = validate({ body: bodySchema, query: querySchema, params: paramsSchema });
 
       const serviceName = Math.random();
 
@@ -200,6 +222,7 @@ describe("validate", () => {
       const request = {
         body: Math.random(),
         query: Math.random(),
+        params: Math.random()
       };
 
       result(null, "", fakeServiceDescriptor);
@@ -208,22 +231,28 @@ describe("validate", () => {
 
       const bodySchemaError = Math.random();
       const querySchemaError = Math.random();
-
-      bodySchema.validate
-        .mockImplementationOnce(() => ({
-          error: { message: bodySchemaError },
-        }))
-        .mockImplementationOnce(() => ({}));
+      const paramsSchemaError = Math.random();
 
       querySchema.validate
         .mockImplementationOnce(() => ({
           error: { message: querySchemaError },
         }))
-        .mockImplementationOnce(() => ({}));
+        .mockImplementation(() => ({}));
+
+      bodySchema.validate
+        .mockImplementationOnce(() => ({
+          error: { message: bodySchemaError },
+        }))
+        .mockImplementation(() => ({}));
+
+      paramsSchema.validate
+        .mockImplementationOnce(() => ({
+          error: { message: paramsSchemaError },
+        }))
+        .mockImplementation(() => ({}));
 
       // query error
       let serviceResult = fakeService.getName(request, response, next);
-
       expect(response.send).toHaveBeenCalledWith(
         "Query Error " + querySchemaError
       );
@@ -236,8 +265,16 @@ describe("validate", () => {
       );
       expect(serviceResult).toBeUndefined();
 
+      // params error
+      serviceResult = fakeService.getName(request, response, next);
+      expect(response.send).toHaveBeenCalledWith(
+        "Params Error " + paramsSchemaError
+      );
+      expect(serviceResult).toBeUndefined();
+
+
       // result
-      expect(response.status).toHaveBeenNthCalledWith(2, 400);
+      expect(response.status).toHaveBeenNthCalledWith(3, 400);
     });
 
     it("no validation", () => {
@@ -251,9 +288,13 @@ describe("validate", () => {
         validate: jest.fn().mockImplementation(() => ({})),
       };
 
+      const paramsSchema: any = {
+        validate: jest.fn().mockImplementation(() => ({})),
+      };
+
       const next = jest.fn();
 
-      const result = validate({ body: bodySchema, query: querySchema });
+      const result = validate({ body: bodySchema, query: querySchema, params: paramsSchema });
 
       const serviceName = Math.random();
 
@@ -272,6 +313,7 @@ describe("validate", () => {
       const request = {
         body: Math.random(),
         query: Math.random(),
+        params: Math.random()
       };
 
       result(null, "", fakeServiceDescriptor);

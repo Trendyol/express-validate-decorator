@@ -6,6 +6,7 @@ import { NextFunction, Request, Response } from "express";
 export default function validate(model: ValidateModel) {
   let querySchema: Joi.ObjectSchema<any> | undefined;
   let bodySchema: Joi.ObjectSchema<any> | undefined;
+  let paramsSchema: Joi.ObjectSchema<any> | undefined;
 
   if (model.query)
     querySchema = Joi.isSchema(model.query)
@@ -17,8 +18,17 @@ export default function validate(model: ValidateModel) {
       ? (model.body as Joi.ObjectSchema<any>)
       : Joi.object(model.body as JoiModelObject);
 
-  if (querySchema === undefined && bodySchema === undefined)
-    throw Error("Query or Body schema required");
+  if (model.params)
+    paramsSchema = Joi.isSchema(model.params)
+      ? (model.params as Joi.ObjectSchema<any>)
+      : Joi.object(model.params as JoiModelObject);
+
+  if (
+    querySchema === undefined &&
+    bodySchema === undefined &&
+    paramsSchema === undefined
+  )
+    throw Error("Query, Body or Params schema required");
 
   return function (
     scope: unknown,
@@ -45,6 +55,14 @@ export default function validate(model: ValidateModel) {
         const bodyResult = bodySchema.validate(req.body);
         if (bodyResult.error)
           return res.status(400).send("Body Error " + bodyResult.error.message);
+      }
+
+      if (paramsSchema) {
+        const paramsResult = paramsSchema.validate(req.params);
+        if (paramsResult.error)
+          return res
+            .status(400)
+            .send("Params Error " + paramsResult.error.message);
       }
 
       return original.apply(this, [req, res, next]);

@@ -7,4 +7,5 @@ export interface JoiModelObject {
 export interface ValidateModel {
   body?: Joi.ObjectSchema<JoiModelObject> | JoiModelObject;
   query?: Joi.ObjectSchema<JoiModelObject> | JoiModelObject;
+  params?: Joi.ObjectSchema<JoiModelObject> | JoiModelObject;
 }
