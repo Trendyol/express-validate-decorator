@@ -47,14 +47,14 @@ export default function validate(model: ValidateModel) {
         if (queryResult.error) {
           return res
             .status(400)
-            .send("Query Error " + queryResult.error.message);
+            .json({ message: "Query Error " + queryResult.error.message });
         }
       }
 
       if (bodySchema) {
         const bodyResult = bodySchema.validate(req.body);
         if (bodyResult.error)
-          return res.status(400).send("Body Error " + bodyResult.error.message);
+          return res.status(400).json({ message: "Body Error " + bodyResult.error.message });
       }
 
       if (paramsSchema) {
@@ -62,7 +62,7 @@ export default function validate(model: ValidateModel) {
         if (paramsResult.error)
           return res
             .status(400)
-            .send("Params Error " + paramsResult.error.message);
+            .json({ message: "Params Error " + paramsResult.error.message });
       }
 
       return original.apply(this, [req, res, next]);

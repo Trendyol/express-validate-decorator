@@ -117,7 +117,7 @@ describe("validate", () => {
 
       const response = {
         status: jest.fn(),
-        send: jest.fn(),
+        json: jest.fn(),
       };
 
       const request = {
@@ -165,7 +165,7 @@ describe("validate", () => {
 
       const response = {
         status: jest.fn().mockReturnThis(),
-        send: jest.fn(),
+        json: jest.fn(),
       };
 
       const request = {
@@ -216,7 +216,7 @@ describe("validate", () => {
 
       const response = {
         status: jest.fn().mockReturnThis(),
-        send: jest.fn(),
+        json: jest.fn(),
       };
 
       const request = {
@@ -253,22 +253,22 @@ describe("validate", () => {
 
       // query error
       let serviceResult = fakeService.getName(request, response, next);
-      expect(response.send).toHaveBeenCalledWith(
-        "Query Error " + querySchemaError
+      expect(response.json).toHaveBeenCalledWith(
+        { message: "Query Error " + querySchemaError }
       );
       expect(serviceResult).toBeUndefined();
 
       // body error
       serviceResult = fakeService.getName(request, response, next);
-      expect(response.send).toHaveBeenCalledWith(
-        "Body Error " + bodySchemaError
+      expect(response.json).toHaveBeenCalledWith(
+        { message: "Body Error " + bodySchemaError }
       );
       expect(serviceResult).toBeUndefined();
 
       // params error
       serviceResult = fakeService.getName(request, response, next);
-      expect(response.send).toHaveBeenCalledWith(
-        "Params Error " + paramsSchemaError
+      expect(response.json).toHaveBeenCalledWith(
+        { message: "Params Error " + paramsSchemaError }
       );
       expect(serviceResult).toBeUndefined();
 
@@ -307,7 +307,7 @@ describe("validate", () => {
 
       const response = {
         status: jest.fn().mockReturnThis(),
-        send: jest.fn(),
+        json: jest.fn(),
       };
 
       const request = {
