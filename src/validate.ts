@@ -54,7 +54,9 @@ export default function validate(model: ValidateModel) {
       if (bodySchema) {
         const bodyResult = bodySchema.validate(req.body);
         if (bodyResult.error)
-          return res.status(400).json({ message: "Body Error " + bodyResult.error.message });
+          return res
+            .status(400)
+            .json({ message: "Body Error " + bodyResult.error.message });
       }
 
       if (paramsSchema) {
